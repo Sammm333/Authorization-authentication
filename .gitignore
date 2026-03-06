@@ -27,3 +27,14 @@ share/python-wheels/
 MANIFEST
 
 # PyInstaller
+
+# Environment variables
+.env
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Docker
+.dockerignore
