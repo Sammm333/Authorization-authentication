@@ -15,6 +15,7 @@ A production-ready authentication system built with FastAPI, featuring JWT token
 - **Brute Force Protection** — Rate limiting (5 attempts/minute per IP)
 - **Refresh Tokens** — Auto token renewal (7-day expiry)
 - **SQLite Database** — Easy to switch to PostgreSQL for production
+- **Docker Support** — Run everything with a single command
 
 ---
 
@@ -27,6 +28,7 @@ A production-ready authentication system built with FastAPI, featuring JWT token
 | Security | SlowAPI (rate limiting) |
 | Database | SQLite |
 | Frontend | HTML, CSS, JavaScript |
+| DevOps | Docker, Docker Compose, Nginx |
 
 ---
 
@@ -48,38 +50,100 @@ auth-portal/
 │   │       └── google_auth.py
 │   ├── alembic/
 │   ├── alembic.ini
+│   ├── Dockerfile
 │   └── requirements.txt
-└── frontend/
-    ├── index.html
-    ├── style.css
-    ├── script.js
-    ├── admin.html
-    ├── admin.css
-    └── admin.js
+├── frontend/
+│   ├── index.html
+│   ├── style.css
+│   ├── script.js
+│   ├── admin.html
+│   ├── admin.css
+│   └── admin.js
+├── docker-compose.yml
+├── .gitignore
+├── LICENSE
+└── README.md
 ```
 
 ---
 
 ## 🚀 Getting Started
 
-### Requirements
+### Option 1 — Docker (Recommended)
+
+The easiest way to run the project.
+
+**Requirements:**
+- Docker
+- Docker Compose
+
+**Steps:**
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/YOUR_USERNAME/auth-portal.git
+cd auth-portal
+
+# 2. Create .env file in /backend
+cp backend/.env.example backend/.env
+# Fill in your values in .env
+
+# 3. Run everything
+docker-compose up --build
+```
+
+- **Frontend:** `http://localhost:3000`
+- **Backend:** `http://localhost:8000`
+- **API Docs:** `http://localhost:8000/docs`
+
+**Stop:**
+```bash
+docker-compose down
+```
+
+---
+
+### Option 2 — Manual Setup
+
+**Requirements:**
 - Python 3.10+
 - pip
 
-### Installation
+**Steps:**
 
 ```bash
+# 1. Clone the repository
 git clone https://github.com/YOUR_USERNAME/auth-portal.git
 cd auth-portal/backend
+
+# 2. Create virtual environment
 python -m venv venv
 venv\Scripts\activate  # Windows
 source venv/bin/activate  # Mac/Linux
+
+# 3. Install dependencies
 pip install -r requirements.txt
+
+# 4. Create .env file
+cp .env.example .env
+# Fill in your values
+
+# 5. Run database migrations
+alembic upgrade head
+
+# 6. Start backend
+uvicorn app.main:app --reload
+
+# 7. Start frontend (new terminal)
+cd ../frontend
+python -m http.server 3000
 ```
 
-### Environment Variables
+---
 
-Create `.env` file in `/backend` (use `.env.example` as template):
+## 🔑 Environment Variables
+
+Create `.env` file in `/backend` using `.env.example` as template:
 
 ```env
 GOOGLE_CLIENT_ID=your_google_client_id
@@ -87,31 +151,12 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 SECRET_KEY=your_secret_key
 ```
 
-### Database Setup
-
-```bash
-alembic upgrade head
-```
-
-### Run Backend
-
-```bash
-cd backend
-uvicorn app.main:app --reload
-```
-
-### Run Frontend
-
-```bash
-cd frontend
-python -m http.server 3000
-```
-
-### API Docs
-
-```
-http://localhost:8000/docs
-```
+### Getting Google OAuth2 Credentials:
+1. Go to [console.cloud.google.com](https://console.cloud.google.com)
+2. Create a new project
+3. Enable Google OAuth2 API
+4. Create OAuth2 credentials
+5. Add `http://localhost:8000/api/v1/auth/google/callback` to redirect URIs
 
 ---
 
@@ -133,13 +178,22 @@ http://localhost:8000/docs
 
 ---
 
+## 👑 Admin Credentials
+
+Default admin credentials (change in `routers/auth.py`):
+
+```
+Username: admin
+Password: adminpass
+```
+
+---
+
 ## 🗺 Roadmap
 
-- [ ] Docker + docker-compose
 - [ ] PostgreSQL support
+- [ ] AWS deployment guide
 - [ ] CI/CD with GitHub Actions
-- [ ] AWS deployment
-- [ ] User dashboard page
 - [ ] Password reset via email
 - [ ] Two-factor authentication (2FA)
 
