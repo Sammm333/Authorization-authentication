@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Admin Panel</title>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>🔐 Auth Portal</h2>
+            <ul>
+                <li class="active"><a href="#"><i class="fa-solid fa-dashboard"></i> Dashboard</a></li>
+                <li><a href="#"><i class="fa-solid fa-users"></i> Users</a></li>
+            </ul>
+            <button class="btn logout-btn" onclick="logout()">
+                <i class="fa-solid fa-sign-out"></i> Logout
+            </button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main">
+            <!-- Header -->
+            <div class="header">
+                <h1>Dashboard</h1>
+                <span>Welcome, <strong id="admin-name">Admin</strong></span>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats">
+                <div class="stat-card">
+                    <h3 id="total-users">0</h3>
+                    <p>Total Users</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="active-users">0</h3>
+                    <p>Active Users</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="banned-users">0</h3>
+                    <p>Banned Users</p>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="table-container">
+                <h2>Users</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table">
+                        <!-- filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
