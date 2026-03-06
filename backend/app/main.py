@@ -8,6 +8,7 @@ from slowapi.errors import RateLimitExceeded
 from app.database import engine, Base
 from app.routers import auth, users, admin
 from app.routers import google_auth
+from backend.app.auth import SECRET_KEY
 
 app = FastAPI(title="Auth Portal")
 
@@ -15,7 +16,7 @@ limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-app.add_middleware(SessionMiddleware, secret_key="Bb299100!")
+app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

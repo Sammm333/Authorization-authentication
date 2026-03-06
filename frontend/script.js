@@ -1,14 +1,14 @@
-function switchTab(tab) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
-    if (tab === 'login') {
-        document.querySelectorAll('.tab-btn')[0].classList.add('active');
-        document.getElementById('login-panel').classList.add('active');
-    } else {
-        document.querySelectorAll('.tab-btn')[1].classList.add('active');
-        document.getElementById('register-panel').classList.add('active');
-    }
-}
+const container = document.querySelector('.container');
+const registerBtn = document.querySelector('.register-btn');
+const loginBtn = document.querySelector('.login-btn');
+
+registerBtn.addEventListener('click', () => {
+    container.classList.add('active');
+});
+
+loginBtn.addEventListener('click', () => {
+    container.classList.remove('active');
+});
 
 function showToast(message, type) {
     const icon = type === 'success' ? '✓' : '✕';
@@ -41,7 +41,6 @@ async function refreshAccessToken() {
     }
 }
 
-// Refresh every 25 minutes
 setInterval(refreshAccessToken, 25 * 60 * 1000);
 
 // Google OAuth token
@@ -54,7 +53,7 @@ if (googleToken) {
 }
 
 // LOGIN
-document.getElementById('login-form').addEventListener('submit', async (e) => {
+document.querySelector('.form-box.login form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const username = e.target.querySelector('input[type="text"]').value;
     const password = e.target.querySelector('input[type="password"]').value;
@@ -86,7 +85,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
 });
 
 // REGISTER
-document.getElementById('register-form').addEventListener('submit', async (e) => {
+document.querySelector('.form-box.register form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const username = e.target.querySelector('input[type="text"]').value;
     const email = e.target.querySelector('input[type="email"]').value;
@@ -100,7 +99,7 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
         const data = await response.json();
         if (response.ok) {
             showToast('Account created! Please sign in.', 'success');
-            switchTab('login');
+            container.classList.remove('active');
         } else {
             showToast(data.detail || 'Registration failed', 'error');
         }
