@@ -4,6 +4,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from jose import JWTError, jwt
+import os
+from dotenv import load_dotenv
 
 from app.database import SessionLocal, engine, Base
 from app.models import User
@@ -14,8 +16,16 @@ from app.auth import (
     SECRET_KEY, ALGORITHM
 )
 
+load_dotenv()
+
+ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+
+if not ADMIN_USERNAME or not ADMIN_PASSWORD:
+    raise ValueError("ADMIN_USERNAME and ADMIN_PASSWORD must be set in .env")
+
 ADMIN_CREDS = {
-    "admin": "adminpass"
+    ADMIN_USERNAME: ADMIN_PASSWORD
 }
 
 def get_db():
@@ -35,12 +45,18 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
 
+    # Check if registering as admin
+    is_admin = (
+        user.username == ADMIN_USERNAME and
+        user.password == ADMIN_PASSWORD
+    )
+
     hashed_password = hash_password(user.password)
     new_user = User(
         username=user.username,
         email=user.email,
         hashed_password=hashed_password,
-        role="user"
+        role="admin" if is_admin else "user"
     )
     db.add(new_user)
     db.commit()
@@ -91,4 +107,8 @@ def refresh(payload: dict, db: Session = Depends(get_db)):
         raise credentials_exception
 
     access_token = create_access_token(data={"sub": user.email})
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "role": user.role
+    }

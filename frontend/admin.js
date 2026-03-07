@@ -6,7 +6,7 @@ if (!token || role !== 'admin') {
     window.location.href = 'index.html';
 }
 
-const API = 'http://127.0.0.1:8000/api/v1';
+const API = '/api/v1';
 
 // Загрузить данные админа
 async function loadDashboard() {

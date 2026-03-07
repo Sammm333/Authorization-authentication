@@ -4,11 +4,14 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
+import os
+from dotenv import load_dotenv
 
 from app.database import SessionLocal
 from app.models import User
 
-SECRET_KEY = "Bb299100!"
+load_dotenv()
+SECRET_KEY = os.getenv("SECRET_KEY", "change-this-secret-key-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_EXPIRE_DAYS = 7

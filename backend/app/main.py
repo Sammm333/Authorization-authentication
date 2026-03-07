@@ -8,7 +8,7 @@ from slowapi.errors import RateLimitExceeded
 from app.database import engine, Base
 from app.routers import auth, users, admin
 from app.routers import google_auth
-from backend.app.auth import SECRET_KEY
+from app.auth import SECRET_KEY
 
 app = FastAPI(title="Auth Portal")
 

@@ -24,7 +24,7 @@ async function refreshAccessToken() {
     const refreshToken = localStorage.getItem('refresh_token');
     if (!refreshToken) return;
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/v1/auth/refresh', {
+        const response = await fetch('/api/v1/auth/refresh', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ refresh_token: refreshToken })
@@ -61,7 +61,7 @@ document.querySelector('.form-box.login form').addEventListener('submit', async 
     formData.append('username', username);
     formData.append('password', password);
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/v1/auth/login', {
+        const response = await fetch('/api/v1/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: formData
@@ -91,7 +91,7 @@ document.querySelector('.form-box.register form').addEventListener('submit', asy
     const email = e.target.querySelector('input[type="email"]').value;
     const password = e.target.querySelector('input[type="password"]').value;
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/v1/auth/register', {
+        const response = await fetch('/api/v1/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, email, password })
