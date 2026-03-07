@@ -2,7 +2,7 @@
 
 > ⚠️ **This project is currently under active development. Some features may be incomplete or subject to change.**
 
-A production-ready authentication system built with FastAPI, featuring JWT tokens, Google OAuth2, role-based access control, and a full admin panel.
+A production-ready authentication system built with FastAPI, featuring JWT tokens, Google OAuth2, role-based access control, and a full admin panel — served through a single Nginx reverse proxy.
 
 ---
 
@@ -16,6 +16,7 @@ A production-ready authentication system built with FastAPI, featuring JWT token
 - **Refresh Tokens** — Auto token renewal (7-day expiry)
 - **SQLite Database** — Easy to switch to PostgreSQL for production
 - **Docker Support** — Run everything with a single command
+- **Nginx Reverse Proxy** — Single port entry point for frontend and backend
 
 ---
 
@@ -60,6 +61,7 @@ auth-portal/
 │   ├── admin.css
 │   └── admin.js
 ├── docker-compose.yml
+├── nginx.conf
 ├── .gitignore
 ├── LICENSE
 └── README.md
@@ -89,16 +91,15 @@ cp backend/.env.example backend/.env
 # Fill in your values in .env
 
 # 3. Run everything
-docker-compose up --build
+docker compose up --build
 ```
 
-- **Frontend:** `http://localhost:3000`
-- **Backend:** `http://localhost:8000`
-- **API Docs:** `http://localhost:8000/docs`
+- **Frontend + Backend:** `http://localhost`
+- **API Docs:** `http://localhost/docs`
 
 **Stop:**
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ---
@@ -149,6 +150,10 @@ Create `.env` file in `/backend` using `.env.example` as template:
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 SECRET_KEY=your_secret_key
+ADMIN_USERNAME=your_admin_username
+ADMIN_PASSWORD=your_admin_password
+BACKEND_URL=http://localhost
+FRONTEND_URL=http://localhost
 ```
 
 ### Getting Google OAuth2 Credentials:
@@ -156,7 +161,28 @@ SECRET_KEY=your_secret_key
 2. Create a new project
 3. Enable Google OAuth2 API
 4. Create OAuth2 credentials
-5. Add `http://localhost:8000/api/v1/auth/google/callback` to redirect URIs
+5. Add `http://localhost/api/v1/auth/google/callback` to **Authorized redirect URIs**
+6. Add `http://localhost` to **Authorized JavaScript origins**
+
+---
+
+## 🌐 Nginx Architecture
+
+All traffic goes through a single Nginx reverse proxy on port 80:
+
+```
+Browser → localhost
+              ↓
+           Nginx :80
+          /        \
+    frontend      /api/ → backend:8000
+```
+
+| URL | Description |
+|---|---|
+| `http://localhost/` | Frontend |
+| `http://localhost/api/` | Backend API |
+| `http://localhost/docs` | Swagger UI |
 
 ---
 
@@ -178,14 +204,16 @@ SECRET_KEY=your_secret_key
 
 ---
 
-## 👑 Admin Credentials
+## 👑 Admin Setup
 
-Default admin credentials (change in `routers/auth.py`):
+Admin credentials are set via `.env` file:
 
+```env
+ADMIN_USERNAME=your_admin_username
+ADMIN_PASSWORD=your_admin_password
 ```
-Username: admin
-Password: adminpass
-```
+
+Register with these exact credentials to get admin role automatically.
 
 ---
 
