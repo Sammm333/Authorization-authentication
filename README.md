@@ -14,7 +14,7 @@ A production-ready authentication system built with FastAPI, featuring JWT token
 - **Admin Panel** — Ban/unban users, change roles, delete accounts
 - **Brute Force Protection** — Rate limiting (5 attempts/minute per IP)
 - **Refresh Tokens** — Auto token renewal (7-day expiry)
-- **SQLite Database** — Easy to switch to PostgreSQL for production
+- **PostgreSQL Database** — Production-ready database (SQLite fallback for local dev)
 - **Docker Support** — Run everything with a single command
 - **Nginx Reverse Proxy** — Single port entry point for frontend and backend
 
@@ -27,7 +27,7 @@ A production-ready authentication system built with FastAPI, featuring JWT token
 | Backend | FastAPI, SQLAlchemy, Alembic |
 | Auth | JWT (python-jose), Bcrypt, Authlib |
 | Security | SlowAPI (rate limiting) |
-| Database | SQLite |
+| Database | PostgreSQL (SQLite for local dev) |
 | Frontend | HTML, CSS, JavaScript |
 | DevOps | Docker, Docker Compose, Nginx |
 
@@ -154,15 +154,23 @@ ADMIN_USERNAME=your_admin_username
 ADMIN_PASSWORD=your_admin_password
 BACKEND_URL=http://localhost
 FRONTEND_URL=http://localhost
+
+# PostgreSQL (Docker)
+DATABASE_URL=postgresql://postgres:yourpassword@postgres:5432/authportal
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=yourpassword
+POSTGRES_DB=authportal
 ```
+
+> ⚠️ If `DATABASE_URL` is not set, the app falls back to SQLite for local development.
 
 ### Getting Google OAuth2 Credentials:
 1. Go to [console.cloud.google.com](https://console.cloud.google.com)
 2. Create a new project
 3. Enable Google OAuth2 API
 4. Create OAuth2 credentials
-5. Add `http://localhost/api/v1/auth/google/callback` to **Authorized redirect URIs**
-6. Add `http://localhost` to **Authorized JavaScript origins**
+5. Add `http://localhost/api/v1/auth/google/callback` to Authorized redirect URIs
+6. Add `http://localhost` to Authorized JavaScript origins
 
 ---
 
@@ -176,6 +184,8 @@ Browser → localhost
            Nginx :80
           /        \
     frontend      /api/ → backend:8000
+                              ↓
+                         postgres:5432
 ```
 
 | URL | Description |
@@ -219,7 +229,7 @@ Register with these exact credentials to get admin role automatically.
 
 ## 🗺 Roadmap
 
-- [ ] PostgreSQL support
+- [x] PostgreSQL support
 - [ ] AWS deployment guide
 - [ ] CI/CD with GitHub Actions
 - [ ] Password reset via email
